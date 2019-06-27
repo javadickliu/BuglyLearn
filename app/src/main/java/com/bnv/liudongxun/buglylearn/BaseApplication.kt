@@ -28,9 +28,9 @@ class BaseApplication : Application() {
     }
 
     /**
-     * 注意
+     * Bugly全量更新使用注意
      * 1.Beta设置的属性一定要在Bugly.init()之前否则无效
-     * 2. Beta.upgradeListener=upgradeListener  //todo 设置了这个监听SDK就不会处理升级策略了,既不会弹出升级框了
+     * 2.Beta.upgradeListener=upgradeListener 如果设置了upgradeListener监听SDK就不会自动升级策略了,既不会弹出升级框了
      */
     /**
      * 常用api
@@ -38,16 +38,17 @@ class BaseApplication : Application() {
      * Beta.initDelay = 1 * 1000;
      * 2.开始下载状态栏会有提示,有一个图标
      *  Beta.smallIconId = R.drawable.ic_launcher;
-     *    Beta.largeIconId = R.drawable.ic_launcher;//设置无效暂时不知道为啥
-     * 3.获取升级策略
-     * Beta.getUpgradeInfo()
-     * 4.    public static DownloadTask startDownload() 开始下载
-     * 5.  public static void cancelDownload() 取消下载
+     *  Beta.largeIconId = R.drawable.ic_launcher;//设置无效暂时不知道为啥
+     * 3.获取升级策略Beta.getUpgradeInfo()
+     * ·详细升级策略信息包含哪些具体在下面
+     * 4.可以通过startDownload开始下载APK
+     * public static DownloadTask startDownload() 开始下载
+     * 5. public static void cancelDownload() 取消下载
      */
 
     /**
      * UpgradeInfo内容字段如下
-     *     public String id = "";//唯一标识
+     *public String id = "";//唯一标识
     public String title = "";//升级提示标题
     public String newFeature = "";//升级特性描述
     public long publishTime = 0;//升级发布时间,ms
@@ -65,8 +66,8 @@ class BaseApplication : Application() {
 
     /**
      * SDK向服务器请求是否有新的升级策略
-     * 1.SDK默认是程序启动默认向服务器请求是否有新的策略
-     * ,如果不希望SDK执行升级查询可以设置   Beta.autoCheckUpgrade=false 默认为true
+     * 1.SDK默认程序启动自动向服务器请求是否有新的策略
+     * ,如果不希望SDK执行升级查询可以设置Beta.autoCheckUpgrade=false 默认为true
      */
     val upgradeListener:UpgradeListener=object :UpgradeListener{
         /**
@@ -80,8 +81,6 @@ class BaseApplication : Application() {
               Log.d("test","p0="+p0+" p1="+p1+" p2="+p2+" p3="+p3)
             if(p1!=null){//发现新版本
                 Log.d("test","find new version ")
-           //   AppUpdateDialogView.showDialog()
-              //  EventBus.getDefault().postSticky(1)
                 startActivity(Intent(this@BaseApplication, UpgradeActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
             }
         }
@@ -114,6 +113,9 @@ class BaseApplication : Application() {
 
     }
 
+    /**
+     * 查询升级策略时候的一些回调
+     */
     val upgradeStateListener=object :UpgradeStateListener{
         /**
          * 更新中
